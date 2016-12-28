@@ -1,0 +1,29 @@
+body {
+  background-color: #000;
+}
+
+#wrap {
+  height: auto !important;
+  margin: 0 auto -60px;
+  min-height: 100%;
+}
+
+#footer {
+  background-color: #000;
+}
+
+#push, #footer {
+  height: 60px;
+}
+
+.container .credit {
+  margin: 20px 0;
+}
+
+.muted {
+  color: #333;
+}
+
+button {
+  width: 100%;
+}
