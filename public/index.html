@@ -1,0 +1,49 @@
+<html>
+  <head>
+    <title>Fantamorto</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <script src="https://www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
+    <script src="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="src/js/fantamorto.js"></script>
+
+    <link href="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="src/css/fantamorto.css" rel="stylesheet">
+  </head>
+
+  <body onload="init();">
+    <div id="wrap">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <h1 class="text-center">
+              FANTAMORTO
+            </h1>
+            <hr>
+            <div id="placeholder"></div>
+            <div id="messages"></div>
+          </div>
+        </div>
+      </div>
+      <div id="push"></div>
+    </div>
+    <div id="footer">
+      <div class="container">
+        <hr>
+        <p class="text-center muted credit">
+          &copy; 2016-7 Master Corporation
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
