@@ -28,3 +28,7 @@ body {
 button {
   width: 100%;
 }
+
+td, th {
+  color: #fff;
+}
