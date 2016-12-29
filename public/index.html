@@ -12,52 +12,10 @@
     <script src="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script>
-      const facebook_provider = new firebase.auth.FacebookAuthProvider();
+    <script src="src/js/fantamorto.js"></script>
 
-      function init() {
-        var config = {
-          apiKey: "AIzaSyCmxx5Czs79u-d6PkJYJm-t3cWDZIku6Ac",
-          authDomain: "fantamorto-4f1ad.firebaseapp.com",
-          databaseURL: "https://fantamorto-4f1ad.firebaseio.com",
-          storageBucket: "fantamorto-4f1ad.appspot.com",
-          messagingSenderId: "127221844118"
-        };
-        firebase.initializeApp(config);
-
-        firebase.auth().getRedirectResult().then(function(result) {
-          if (result.credential) {
-            var token = result.credential.accessToken;
-            console.log(token);
-          }
-          var user = result.user;
-          console.log(result);
-          console.log(user);
-        }).catch(function(error) {
-          console.log(error);
-        });
-
-        firebase.auth().onAuthStateChanged(function(user) {
-          if (user) {
-            console.log(user.displayName);
-          }
-        });
-      }
-
-      function facebook_login() {
-        if (firebase.auth().currentUser) {
-          console.log(firebase.auth().currentUser.displayName);
-        } else {
-          firebase.auth().signInWithRedirect(facebook_provider);
-        }
-      }
-
-      function facebook_logout() {
-        firebase.auth().signOut();
-      }
-    </script>
-
-    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.css" />
+    <link href="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="src/css/fantamorto.css" rel="stylesheet">
@@ -72,13 +30,8 @@
               FANTAMORTO
             </h1>
             <hr>
-            <button class="btn" onclick="facebook_login();">
-              <i class="fa fa-facebook"></i> Login with Facebook
-            </button>
-            <br><br>
-            <button class="btn" onclick="facebook_logout();">
-              <i class="fa fa-facebook"></i> Logout from Facebook
-            </button>
+            <div id="placeholder"></div>
+            <div id="messages"></div>
           </div>
         </div>
       </div>
