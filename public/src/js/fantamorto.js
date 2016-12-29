@@ -11,6 +11,7 @@ const google_provider   = new firebase.auth.GoogleAuthProvider()
 
 const placeholder       = '#placeholder'
 const messages          = '#messages'
+const team_member       = '#team_member'
 
 const init = () => {
   firebase.initializeApp(firebase_configuration)
@@ -18,7 +19,7 @@ const init = () => {
   firebase.auth().onAuthStateChanged(function(user) {
     $(placeholder).empty()
 
-    if (user) { $(placeholder).append(welcome(fantamorto_user(user))) }
+    if (user) { init_user(user) }
     else      { append_login_buttons() }
   })
 
@@ -34,10 +35,48 @@ const init = () => {
   })
 }
 
+const init_user = (user) => {
+  const u = fantamorto_user(user)
+
+  $(placeholder).append(welcome(u)).append(team()).append(add_team_member_form())
+
+  firebase.database().ref(`${id()}`).on('value', function(snapshot) {
+    $('#team').empty()
+    
+    for(tm in snapshot.val()) {
+      $('#team').append(format_team_member(snapshot.val()[tm]))
+    }
+  })
+
+  db().ref(`users/${u.id}`).set(u)
+}
+
+const add_team_member = () => {
+  const tm = $(team_member).val().toLowerCase().replace(/\s/g, '')
+
+  db().ref(`${id()}/${tm}`).set({
+    name: $(team_member).val(),
+    age: 123
+  }).then(function() {
+    $(messages).html(`
+      <br>
+      <div class="alert alert-success" role="alert">
+        ${$(team_member).val()} é stato aggiunto con successo alla tua squadra.
+      </div>
+    `)
+    $(team_member).val('')
+  })
+}
+
+const id = () => firebase.auth().currentUser.uid
+
+const db = () => firebase.database()
+
 const fantamorto_user = (user) => {
   return {
-    name: user.displayName,
+    id: user.uid,
     email: user.email,
+    name: user.displayName,
     picture: user.photoURL
   }
 }
@@ -52,16 +91,32 @@ const append_login_buttons = () => {
   $(placeholder).append(buttons.join('<br><br>'))
 }
 
-const clear = () => {
-  $(placeholder).empty()
-  $(messages).empty()
-}
+const team = () => `
+  <br>
+  <table class="table table bordered table-hover table-condensed">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Etá</th>
+      </tr>
+    </thead>
+    <tbody id="team">
+    </tbody>
+  </table>
+`
+
+const format_team_member = (team_member) => `
+  <tr>
+    <td>${team_member.name}</td>
+    <td>${team_member.age}</td>
+  </tr>
+`
 
 const welcome = (user) => `
   <img class="img-responsive center-block" src="${user.picture}" />
-  <h2 class="text-center">
+  <h4 class="text-center">
     Benvenuto, ${user.name}!
-  </h2>
+  </h4>
 `
 
 const google_login_button = () => `
@@ -74,4 +129,18 @@ const facebook_login_button = () => `
   <button class="btn" onclick="facebook_login()">
     <i class="fa fa-facebook"></i> Accedi con Facebook
   </button>
+`
+
+const add_team_member_form = () => `
+  <hr>
+  <div class="row">
+    <div class="col-lg-12">
+      <input id="team_member" class="form-group" style="width: 100%; height: 23px;">
+    </div>
+    <div class="col-lg-12">
+      <button class="btn" onclick="add_team_member()">
+        Aggiungi alla mia Squadra
+      </button>
+    </div>
+  </div>
 `
