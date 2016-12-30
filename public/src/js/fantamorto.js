@@ -1,9 +1,9 @@
 const firebase_configuration = {
-  apiKey: "AIzaSyCmxx5Czs79u-d6PkJYJm-t3cWDZIku6Ac",
-  authDomain: "fantamorto-4f1ad.firebaseapp.com",
-  databaseURL: "https://fantamorto-4f1ad.firebaseio.com",
-  storageBucket: "fantamorto-4f1ad.appspot.com",
-  messagingSenderId: "127221844118"
+  apiKey:             "AIzaSyCmxx5Czs79u-d6PkJYJm-t3cWDZIku6Ac",
+  authDomain:         "fantamorto-4f1ad.firebaseapp.com",
+  databaseURL:        "https://fantamorto-4f1ad.firebaseio.com",
+  storageBucket:      "fantamorto-4f1ad.appspot.com",
+  messagingSenderId:  "127221844118"
 }
 
 const facebook_provider = new firebase.auth.FacebookAuthProvider()
@@ -38,17 +38,31 @@ const init = () => {
 const init_user = (user) => {
   const u = fantamorto_user(user)
 
-  $(placeholder).append(welcome(u)).append(team()).append(add_team_member_form())
-
   firebase.database().ref(`${id()}`).on('value', function(snapshot) {
     $('#team').empty()
-    
+
     for(tm in snapshot.val()) {
       $('#team').append(format_team_member(snapshot.val()[tm]))
     }
   })
 
   db().ref(`users/${u.id}`).set(u)
+
+  firebase.database().ref(`ladder/${u.id}`).once('value').then(function(snapshot) {
+    if(snapshot.val() == null) {
+      db().ref(`ladder/${u.id}`).update({ team: u.name, budget: 0, points: 0 })
+    }
+  })
+
+  build_ui(u)
+}
+
+const build_ui = (user) => {
+  $(placeholder)
+  .append(team())
+  .append(add_team_member_form())
+  $('#login_area')
+  .append(welcome(user))
 }
 
 const add_team_member = () => {
@@ -69,7 +83,6 @@ const add_team_member = () => {
 }
 
 const id = () => firebase.auth().currentUser.uid
-
 const db = () => firebase.database()
 
 const fantamorto_user = (user) => {
@@ -83,7 +96,11 @@ const fantamorto_user = (user) => {
 
 const facebook_login  = () => firebase.auth().signInWithRedirect(facebook_provider)
 const google_login    = () => firebase.auth().signInWithRedirect(google_provider)
-const logout          = () => firebase.auth().signOut()
+const logout          = () => {
+  firebase.auth().signOut()
+
+  $('#login_area').empty()
+}
 
 const append_login_buttons = () => {
   const buttons = [facebook_login_button(), google_login_button()]
@@ -113,20 +130,34 @@ const format_team_member = (team_member) => `
 `
 
 const welcome = (user) => `
-  <img class="img-responsive center-block" src="${user.picture}" />
-  <h4 class="text-center">
-    Benvenuto, ${user.name}!
-  </h4>
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-2">
+        <img class="img-responsive minime" src="${user.picture}" />
+      </div>
+      <div class="col-xs-6">
+        <p class="text-center">
+          ${user.name}
+        </p>
+      </div>
+      <div class="col-xs-4">
+        <a class="pull-right" onclick="logout()">
+          <i class="fa fa-sign-out"></i> Logout
+        </a>
+      </div>
+    </div>
+  </div>
+  <hr>
 `
 
 const google_login_button = () => `
-  <button class="btn" onclick="google_login()">
+  <button class="btn btn-default" onclick="google_login()">
     <i class="fa fa-google"></i> Accedi con Google
   </button>
 `
 
 const facebook_login_button = () => `
-  <button class="btn" onclick="facebook_login()">
+  <button class="btn btn-default" onclick="facebook_login()">
     <i class="fa fa-facebook"></i> Accedi con Facebook
   </button>
 `
@@ -135,10 +166,14 @@ const add_team_member_form = () => `
   <hr>
   <div class="row">
     <div class="col-lg-12">
-      <input id="team_member" class="form-group" style="width: 100%; height: 23px;">
+      <input id="team_member"
+             class="form-control"
+             style="width: 100%; height: 23px;"
+             placeholder="e.g. Caio Giulio Cesare" >
     </div>
+    <br>
     <div class="col-lg-12">
-      <button class="btn" onclick="add_team_member()">
+      <button class="btn btn-default btn-xs" onclick="add_team_member()">
         Aggiungi alla mia Squadra
       </button>
     </div>

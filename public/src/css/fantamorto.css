@@ -32,3 +32,8 @@ button {
 td, th {
   color: #fff;
 }
+
+.minime {
+  width: 2rem;
+  height: 2rem;
+}
