@@ -54,13 +54,22 @@ const init_user = (user) => {
     }
   })
 
+  firebase.database().ref('ladder').on('value', function(snapshot) {
+    $('#ladder').empty()
+
+    for(tm_id in snapshot.val()) {
+      $('#ladder').append(format_ladder_member(tm_id, snapshot.val()[tm_id]))
+    }
+  })
+
   build_ui(u)
 }
 
 const build_ui = (user) => {
   $(placeholder)
-  .append(team())
-  .append(add_team_member_form())
+  .append(ladder())
+  // .append(team())
+  // .append(add_team_member_form())
   $('#login_area')
   .append(welcome(user))
 }
@@ -108,6 +117,37 @@ const append_login_buttons = () => {
   $(placeholder).append(buttons.join('<br><br>'))
 }
 
+const update_ladder = () => {
+  $('#ladder tr').each(function() {
+    const team = {
+      name:   $($(this).find('input')[0]).val(),
+      points: $($(this).find('input')[1]).val(),
+      budget: $($(this).find('input')[2]).val()
+    }
+
+    db().ref(`ladder/${$(this).attr('id')}`).update(team)
+  })
+}
+
+const ladder = () => `
+  <table class="table table bordered table-hover table-condensed">
+    <thead>
+      <tr>
+        <th>Squadra</th>
+        <th>Punti</th>
+        <th>Budget</th>
+      </tr>
+    </thead>
+    <tbody id="ladder">
+    </tbody>
+  </table>
+  <button class="btn btn-default" onclick="update_ladder()">
+    Aggiorna Classifica
+  </button>
+  <br>
+  <hr>
+`
+
 const team = () => `
   <br>
   <table class="table table bordered table-hover table-condensed">
@@ -126,6 +166,20 @@ const format_team_member = (team_member) => `
   <tr>
     <td>${team_member.name}</td>
     <td>${team_member.age}</td>
+  </tr>
+`
+
+const format_ladder_member = (tm_id, ladder_member) => `
+  <tr id="${tm_id}">
+    <td>
+      <input class="form-control" type="text" value="${ladder_member.team}" />
+    </td>
+    <td>
+      <input class="form-control" type="text" value="${ladder_member.points}" />
+    </td>
+    <td>
+      <input class="form-control" type="text" value="${ladder_member.budget}" />
+    </td>
   </tr>
 `
 
