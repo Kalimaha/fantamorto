@@ -58,7 +58,7 @@ const init_user = (user) => {
     $('#ladder').empty()
 
     for(tm_id in snapshot.val()) {
-      $('#ladder').append(format_ladder_member(tm_id, snapshot.val()[tm_id]))
+      $('#read_only_ladder').append(format_read_only_ladder_member(tm_id, snapshot.val()[tm_id]))
     }
   })
 
@@ -66,12 +66,8 @@ const init_user = (user) => {
 }
 
 const build_ui = (user) => {
-  $(placeholder)
-  .append(ladder())
-  // .append(team())
-  // .append(add_team_member_form())
-  $('#login_area')
-  .append(welcome(user))
+  $(placeholder).append(read_only_ladder())
+  $('#login_area').append(welcome(user))
 }
 
 const add_team_member = () => {
@@ -120,12 +116,23 @@ const append_login_buttons = () => {
 const update_ladder = () => {
   $('#ladder tr').each(function() {
     const team = {
-      name:   $($(this).find('input')[0]).val(),
+      team:   $($(this).find('input')[0]).val(),
       points: $($(this).find('input')[1]).val(),
       budget: $($(this).find('input')[2]).val()
     }
 
-    db().ref(`ladder/${$(this).attr('id')}`).update(team)
+    db().ref(`ladder/${$(this).attr('id')}`).update(team).then(function() {
+      $(placeholder).empty()
+      $(placeholder).html(read_only_ladder())
+
+      firebase.database().ref('ladder').on('value', function(snapshot) {
+        $('#ladder').empty()
+
+        for(tm_id in snapshot.val()) {
+          $('#read_only_ladder').append(format_read_only_ladder_member(tm_id, snapshot.val()[tm_id]))
+        }
+      })
+    })
   })
 }
 
@@ -147,6 +154,38 @@ const ladder = () => `
   <br>
   <hr>
 `
+
+const read_only_ladder = () => `
+  <table class="table table bordered table-hover table-condensed">
+    <thead>
+      <tr>
+        <th>Squadra</th>
+        <th>Punti</th>
+        <th>Budget</th>
+      </tr>
+    </thead>
+    <tbody id="read_only_ladder">
+    </tbody>
+  </table>
+  <button class="btn btn-default" onclick="edit_ladder()">
+    <i class="fa fa-wrench"></i> Modifica Classifica
+  </button>
+  <br>
+  <hr>
+`
+
+const edit_ladder = () => {
+  $(placeholder).empty()
+  $(placeholder).html(ladder())
+
+  firebase.database().ref('ladder').on('value', function(snapshot) {
+    $('#ladder').empty()
+
+    for(tm_id in snapshot.val()) {
+      $('#ladder').append(format_ladder_member(tm_id, snapshot.val()[tm_id]))
+    }
+  })
+}
 
 const team = () => `
   <br>
@@ -183,10 +222,17 @@ const format_ladder_member = (tm_id, ladder_member) => `
   </tr>
 `
 
+const format_read_only_ladder_member = (tm_id, ladder_member) => `
+  <tr id="${tm_id}">
+    <td>${ladder_member.team}</td>
+    <td>${ladder_member.points}</td>
+    <td>${ladder_member.budget}</td>
+  </tr>
+`
+
 const welcome = (user) => `
-  <div class="container">
     <div class="row">
-      <div class="col-xs-2">
+      <div class="col-xs-3">
         <img class="img-responsive minime" src="${user.picture}" />
       </div>
       <div class="col-xs-6">
@@ -194,13 +240,12 @@ const welcome = (user) => `
           ${user.name}
         </p>
       </div>
-      <div class="col-xs-4">
+      <div class="col-xs-3">
         <a class="pull-right" onclick="logout()">
-          <i class="fa fa-sign-out"></i> Logout
+          <i class="fa fa-sign-out"></i>
         </a>
       </div>
     </div>
-  </div>
   <hr>
 `
 
