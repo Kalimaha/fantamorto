@@ -12,8 +12,10 @@ app.controller('TeamController', function($scope, $routeParams, $http, $cookies,
 const format_team_member = (team_member) => `
   <tr>
     <td>${team_member.name}</td>
-    <td>${team_member.dob}</td>
+    <td>${age(team_member.dob)}</td>
     <td>${team_member.points}</td>
     <td>${team_member.price}</td>
   </tr>
 `
+
+const age = (dob) => new Date().getFullYear() - new Date(dob).getFullYear()
