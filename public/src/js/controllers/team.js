@@ -16,11 +16,8 @@ const format_team_member = (team_member) => `
         ${team_member.name}
       </a>
     </td>
-    <td>${yob(team_member.dob)}</td>
     <td>${team_member.points}</td>
   </tr>
 `
-
-const yob = (dob) => dob.substring(0, 4)
 
 const google = (name) => `https://www.google.it/#q=${name}+${new Date().getFullYear()}`.replace(/\s/g, '+')
