@@ -231,21 +231,21 @@ const format_read_only_ladder_member = (tm_id, ladder_member) => `
 `
 
 const welcome = (user) => `
-    <div class="row">
-      <div class="col-xs-3">
-        <img class="img-responsive minime" src="${user.picture}" />
-      </div>
-      <div class="col-xs-6">
-        <p class="text-center">
-          ${user.name}
-        </p>
-      </div>
-      <div class="col-xs-3">
-        <a class="pull-right" onclick="logout()">
-          <i class="fa fa-sign-out"></i>
-        </a>
-      </div>
+  <div class="row">
+    <div class="col-xs-3">
+      <img class="img-responsive minime" src="${user.picture}" />
     </div>
+    <div class="col-xs-6">
+      <p class="text-center">
+        ${user.name}
+      </p>
+    </div>
+    <div class="col-xs-3">
+      <a class="pull-right" onclick="logout()">
+        <i class="fa fa-sign-out"></i>
+      </a>
+    </div>
+  </div>
   <hr>
 `
 

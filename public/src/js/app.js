@@ -1,4 +1,4 @@
-const app = angular.module('Fantamorto', ['ngRoute'])
+const app = angular.module('Fantamorto', ['ngRoute', 'ngCookies'])
 
 const firebase_configuration = {
   apiKey:             "AIzaSyCmxx5Czs79u-d6PkJYJm-t3cWDZIku6Ac",
@@ -9,3 +9,9 @@ const firebase_configuration = {
 }
 
 firebase.initializeApp(firebase_configuration)
+
+const logout = () => {
+  firebase.auth().signOut()
+  $('#login_area').empty()
+  window.location = '#!/login'
+}
