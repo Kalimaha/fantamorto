@@ -1,0 +1,50 @@
+body {
+  color: #fff;
+  background-color: #000;
+  font-family: 'Roboto', sans-serif;
+}
+
+#wrap {
+  height: auto !important;
+  margin: 0 auto -60px;
+  min-height: 100%;
+}
+
+#footer {
+  background-color: #000;
+}
+
+#push, #footer {
+  height: 60px;
+}
+
+.container .credit {
+  margin: 20px 0;
+}
+
+.muted {
+  color: #fff;
+}
+
+button {
+  width: 100%;
+}
+
+td, th {
+  color: #fff;
+}
+
+.minime {
+  width: 2rem;
+  height: 2rem;
+}
+
+.btn-facebook {
+  background-color: #3b5998;
+  color: #fff;
+}
+
+.btn-google {
+  background-color: #d34836;
+  color: #fff;
+}
