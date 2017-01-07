@@ -8,14 +8,20 @@ app.controller('LadderController', function($scope, $routeParams, $http, $cookie
       $('#ladder').prepend(format_read_only_ladder_member(t.val()))
     })
   })
+
+  $scope.edit_ladder = () => window.location = '#!/ladder/edit'
 })
 
 const format_read_only_ladder_member = (ladder_member) => `
-  <tr id="${ladder_member.id}">
+  <tr id="${ladder_member.user}">
     <td>
       <img class="img-responsive minime" src="${ladder_member.picture}" />
     </td>
-    <td>${ladder_member.team}</td>
+    <td>
+      <a href="#!/team/${ladder_member.user}">
+        ${ladder_member.team}
+      </a>
+    </td>
     <td>${ladder_member.points}</td>
     <td>${ladder_member.budget}</td>
   </tr>
