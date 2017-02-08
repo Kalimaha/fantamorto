@@ -11,9 +11,16 @@ app.controller('TeamController', function($scope, $routeParams, $http, $cookies,
 
 const format_team_member = (team_member) => `
   <tr>
-    <td>${team_member.name}</td>
-    <td>${team_member.dob}</td>
+    <td>
+      <a href="${google(team_member.name)}" target="_blank">
+        ${team_member.name}
+      </a>
+    </td>
+    <td>${yob(team_member.dob)}</td>
     <td>${team_member.points}</td>
-    <td>${team_member.price}</td>
   </tr>
 `
+
+const yob = (dob) => dob.substring(0, 4)
+
+const google = (name) => `https://www.google.it/#q=${name}+${new Date().getFullYear()}`.replace(/\s/g, '+')

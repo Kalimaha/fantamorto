@@ -23,6 +23,5 @@ const format_read_only_ladder_member = (ladder_member) => `
       </a>
     </td>
     <td>${ladder_member.points}</td>
-    <td>${ladder_member.budget}</td>
   </tr>
 `
