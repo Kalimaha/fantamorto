@@ -1,10 +1,11 @@
 app.config(($routeProvider) => {
   $routeProvider
-  .when('/login',         login_conf())
-  .when('/ladder',        ladder_conf())
-  .when('/ladder/edit',   ladder_edit_conf())
-  .when('/team/:id',      team_conf())
-  .when('/team/:id/edit', team_edit_conf())
+  .when('/login',                   login_conf())
+  .when('/ladder',                  ladder_conf())
+  .when('/ladder/edit',             ladder_edit_conf())
+  .when('/team/:id',                team_conf())
+  .when('/team/:id/edit',           team_edit_conf())
+  .when('/team/:id/remove/:member', team_remove_conf())
   .otherwise({ redirectTo: '/login' })
 })
 
@@ -40,5 +41,12 @@ const team_edit_conf = () => {
   return {
     templateUrl:  'src/html/team_edit.html',
     controller:   'TeamEditController'
+  }
+}
+
+const team_remove_conf = () => {
+  return {
+    templateUrl:  'src/html/team_remove.html',
+    controller:   'TeamRemoveController'
   }
 }
