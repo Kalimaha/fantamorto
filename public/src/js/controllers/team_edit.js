@@ -16,12 +16,19 @@ app.controller('TeamEditController', function($scope, $routeParams, $http, $cook
       show_message()
     }
   }
+
+  $('#dob').on('keyup', function() {
+    const points = new Date().getFullYear() - new Date($(this).val()).getFullYear()
+    const text = isNaN(points) ? 'Inserisci la data completa' : points
+
+    $('#points').html(text)
+  })
 })
 
 const id      = () => $('#name').val().toLowerCase().replace(/\s/g, '')
 const name    = () => $('#name').val()
 const dob     = () => $('#dob').val()
-const points  = () => $('#points').val()
+const points  = () => new Date().getFullYear() - new Date($('#dob').val()).getFullYear()
 const price   = () => $('#price').val()
 
 const is_valid_form = () => {
