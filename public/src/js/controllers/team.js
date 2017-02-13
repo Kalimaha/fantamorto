@@ -29,6 +29,12 @@ const format_team_member = (team, team_member) => `
       </a>
     </td>
     <td>${team_member.points}</td>
+    <td>${team_member.price}</td>
+    <td>
+      <button class="btn btn-default btn-sm" onclick="remove('${team}', '${team_member.name}');">
+        <i class="fa fa-trash"></i>
+      </button>
+    </td>
   </tr>
 `
 
