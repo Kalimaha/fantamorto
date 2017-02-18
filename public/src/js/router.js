@@ -6,8 +6,24 @@ app.config(($routeProvider) => {
   .when('/team/:id',                team_conf())
   .when('/team/:id/edit',           team_edit_conf())
   .when('/team/:id/remove/:member', team_remove_conf())
+  .when('/approve/:id',             approve_conf())
+  .when('/approve/:id/:status',     approve_status_conf())
   .otherwise({ redirectTo: '/login' })
 })
+
+const approve_conf = () => {
+  return {
+    templateUrl:  'src/html/approve.html',
+    controller:   'ApproveController'
+  }
+}
+
+const approve_status_conf = () => {
+  return {
+    templateUrl:  'src/html/approve_status.html',
+    controller:   'ApproveStatusController'
+  }
+}
 
 const login_conf = () => {
   return {
