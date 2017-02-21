@@ -8,8 +8,16 @@ app.config(($routeProvider) => {
   .when('/team/:id/remove/:member', team_remove_conf())
   .when('/approve/:id',             approve_conf())
   .when('/approve/:id/:status',     approve_status_conf())
+  .when('/courtesy/:message',       courtesy_conf())
   .otherwise({ redirectTo: '/login' })
 })
+
+const courtesy_conf = () => {
+  return {
+    templateUrl:  'src/html/courtesy.html',
+    controller:   'CourtesyController'
+  }
+}
 
 const approve_conf = () => {
   return {

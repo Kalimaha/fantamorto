@@ -11,42 +11,56 @@ app.controller('LoginController', function($scope, $routeParams, $http, $cookies
     window.location = '#!/login'
   }
 
-  firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-      $cookies.user = fantamorto_user(user)
-      $cookieStore.put('user', fantamorto_user(user), { expires: new Date(2017, 1, 1) })
-
-      db().ref(`users/${$cookies.user.id}`).set($cookieStore.get('user'))
-      firebase.database().ref(`ladder/${$cookies.user.id}`).once('value').then(function(snapshot) {
-        if(snapshot.val() == null) {
-          const u = $cookieStore.get('user')
-          db().ref(`ladder/${u.id}`).update({
-            user: u.id,
-            picture: u.picture,
-            team: u.name,
-            budget: 0,
-            points: 0
-          })
-        }
-      })
-
-      redirect()
-    }
+  firebase.auth().onAuthStateChanged((firebase_user) => {
+    if (firebase_user) { firebase_login_success(firebase_user) }
   })
 
-  const fantamorto_user = (user) => {
-    return {
-      id: user.uid,
-      email: user.email,
-      name: user.displayName,
-      picture: user.photoURL
+  const firebase_login_success = (firebase_user) => {
+    db().ref(`users/${firebase_user.uid}`).once('value').then((s) => {
+      if (s.val() === null) { handle_new_user(fantamorto_user) }
+      else                  { handle_existing_user(s.val())    }
+    })
+  }
+
+  const handle_new_user = (firebase_user) => {
+    const fm_usr = fantamorto_user(firebase_user, 'PENDING', false)
+    $cookieStore.put('user', fm_usr, { expires: new Date(2017, 1, 1) })
+    db().ref(`users/${$cookieStore.get('user').id}`).set($cookieStore.get('user'))
+    db().ref(`ladder/${$cookieStore.get('user').id}`).once('value').then((s) => {
+      if(s.val() === null) {
+        const u = $cookieStore.get('user')
+        db().ref(`ladder/${u.id}`).update({
+          user:     u.id,
+          picture:  u.picture,
+          team:     u.name,
+          budget:   0,
+          points:   0
+        })
+      }
+    })
+  }
+
+  const handle_existing_user = (existing_user) => {
+    if (existing_user.status === 'APPROVED') {
+      $cookieStore.put('user', existing_user, { expires: new Date(2017, 1, 1) })
+      window.location = '#!/ladder'
+    } else {
+      window.location = '#!/courtesy/La richiesta di approvazione è stata inviata ad un nostro amministratore.'
     }
   }
 
-  const id = () => firebase.auth().currentUser.uid
-  const db = () => firebase.database()
+  const fantamorto_user = (firebase_user, status, admin) => {
+    return {
+      id:       firebase_user.uid,
+      email:    firebase_user.email,
+      name:     firebase_user.displayName,
+      picture:  firebase_user.photoURL,
+      status:   status,
+      admin:    admin
+    }
+  }
 
-  const redirect = () => window.location = '#!/ladder'
+  const db = () => firebase.database()
 
   firebase.auth().getRedirectResult().catch((e) => $('#error_message').css('display', 'block'))
 })
