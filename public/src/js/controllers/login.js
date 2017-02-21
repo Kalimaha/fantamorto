@@ -1,6 +1,7 @@
 app.controller('LoginController', function($scope, $routeParams, $http, $cookies, $cookieStore) {
-  const facebook_provider = new firebase.auth.FacebookAuthProvider()
-  const google_provider   = new firebase.auth.GoogleAuthProvider()
+  const facebook_provider     = new firebase.auth.FacebookAuthProvider()
+  const google_provider       = new firebase.auth.GoogleAuthProvider()
+  const FANTAMORTO_MAILER_URL = 'https://fantamorto-mailer.herokuapp.com/request'
 
   $scope.google_login   = () => firebase.auth().signInWithRedirect(google_provider)
   $scope.facebook_login = () => firebase.auth().signInWithRedirect(facebook_provider)
@@ -17,7 +18,7 @@ app.controller('LoginController', function($scope, $routeParams, $http, $cookies
 
   const firebase_login_success = (firebase_user) => {
     db().ref(`users/${firebase_user.uid}`).once('value').then((s) => {
-      if (s.val() === null) { handle_new_user(fantamorto_user) }
+      if (s.val() === null) { handle_new_user(firebase_user) }
       else                  { handle_existing_user(s.val())    }
     })
   }
@@ -25,27 +26,37 @@ app.controller('LoginController', function($scope, $routeParams, $http, $cookies
   const handle_new_user = (firebase_user) => {
     const fm_usr = fantamorto_user(firebase_user, 'PENDING', false)
     $cookieStore.put('user', fm_usr, { expires: new Date(2017, 1, 1) })
-    db().ref(`users/${$cookieStore.get('user').id}`).set($cookieStore.get('user'))
-    db().ref(`ladder/${$cookieStore.get('user').id}`).once('value').then((s) => {
+
+    db().ref(`users/${fm_usr.id}`).set(fm_usr)
+    db().ref(`ladder/${fm_usr.id}`).once('value').then((s) => {
       if(s.val() === null) {
-        const u = $cookieStore.get('user')
-        db().ref(`ladder/${u.id}`).update({
-          user:     u.id,
-          picture:  u.picture,
-          team:     u.name,
+        db().ref(`ladder/${fm_usr.id}`).update({
+          user:     fm_usr.id,
+          picture:  fm_usr.picture,
+          team:     fm_usr.name,
           budget:   0,
           points:   0
         })
       }
+
+      $.ajax({
+        type: 'GET',
+        url: `${FANTAMORTO_MAILER_URL}/${fm_usr.id}`
+      })
+      .done(()  => show_courtesy_message(approval_request_message()))
+      .fail((e) => show_courtesy_message(e.statusText))
     })
   }
+
+  const show_courtesy_message = (msg) => { window.location = `#!/courtesy/${msg}` }
+  const approval_request_message = () => 'La richiesta di approvazione è stata inviata ad un nostro amministratore.'
 
   const handle_existing_user = (existing_user) => {
     if (existing_user.status === 'APPROVED') {
       $cookieStore.put('user', existing_user, { expires: new Date(2017, 1, 1) })
       window.location = '#!/ladder'
     } else {
-      window.location = '#!/courtesy/La richiesta di approvazione è stata inviata ad un nostro amministratore.'
+      show_courtesy_message(approval_request_message())
     }
   }
 
