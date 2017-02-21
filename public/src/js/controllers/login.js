@@ -40,16 +40,13 @@ app.controller('LoginController', function($scope, $routeParams, $http, $cookies
       }
 
       $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: `${FANTAMORTO_MAILER_URL}/${fm_usr.id}`
       })
       .done(()  => show_courtesy_message(approval_request_message()))
       .fail((e) => show_courtesy_message(e.statusText))
     })
   }
-
-  const show_courtesy_message = (msg) => { window.location = `#!/courtesy/${msg}` }
-  const approval_request_message = () => 'La richiesta di approvazione è stata inviata ad un nostro amministratore.'
 
   const handle_existing_user = (existing_user) => {
     if (existing_user.status === 'APPROVED') {
@@ -71,7 +68,9 @@ app.controller('LoginController', function($scope, $routeParams, $http, $cookies
     }
   }
 
-  const db = () => firebase.database()
+  const db                        = () => firebase.database()
+  const show_courtesy_message     = (msg) => { window.location = `#!/courtesy/${msg}` }
+  const approval_request_message  = () => 'La richiesta di approvazione è stata inviata ad un nostro amministratore.'
 
   firebase.auth().getRedirectResult().catch((e) => $('#error_message').css('display', 'block'))
 })
