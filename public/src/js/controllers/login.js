@@ -29,16 +29,6 @@ app.controller('LoginController', function($scope, $routeParams, $http, $cookies
 
     db().ref(`users/${fm_usr.id}`).set(fm_usr)
     db().ref(`ladder/${fm_usr.id}`).once('value').then((s) => {
-      if(s.val() === null) {
-        db().ref(`ladder/${fm_usr.id}`).update({
-          user:     fm_usr.id,
-          picture:  fm_usr.picture,
-          team:     fm_usr.name,
-          budget:   0,
-          points:   0
-        })
-      }
-
       $.ajax({
         type: 'POST',
         url: `${FANTAMORTO_MAILER_URL}/${fm_usr.id}`
@@ -51,7 +41,20 @@ app.controller('LoginController', function($scope, $routeParams, $http, $cookies
   const handle_existing_user = (existing_user) => {
     if (existing_user.status === 'APPROVED') {
       $cookieStore.put('user', existing_user, { expires: new Date(2017, 1, 1) })
-      window.location = '#!/ladder'
+
+      db().ref(`ladder/${existing_user.id}`).once('value').then((s) => {
+        if(s.val() === null) {
+          db().ref(`ladder/${existing_user.id}`).update({
+            user:     existing_user.id,
+            picture:  existing_user.picture,
+            team:     existing_user.name,
+            budget:   0,
+            points:   0
+          })
+        }
+
+        window.location = '#!/ladder'
+      })
     } else {
       show_courtesy_message(approval_request_message())
     }
